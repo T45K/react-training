@@ -20,29 +20,28 @@ const getNextUser = (xIsNet: boolean): string => {
   return xIsNet ? 'X' : 'O';
 };
 
-const Board = () => {
-  const [xIsNext, setXIsNext] = useState(true);
-  const [squares, setSquares] = useState(Array(9).fill(''));
+type BoardProps = {
+  xIsNext: boolean;
+  squares: string[];
+  onPlay: (a: string[]) => void;
+};
 
+const Board = ({ xIsNext, squares, onPlay }: BoardProps) => {
   const handleClick = (i: number) => {
     if (squares[i] !== '' || linesUp(squares)) {
       return;
     }
     const nextSquares = squares.slice();
     nextSquares[i] = getNextUser(xIsNext);
-    setSquares(nextSquares);
-    setXIsNext(!xIsNext);
+    onPlay(nextSquares);
   };
 
   const renderSquare = (i: number) => {
     return <Square value={squares[i]} onSquareClick={() => handleClick(i)} />;
   };
 
-  const status = linesUp(squares) ? 'Winner: ' + getNextUser(!xIsNext) : 'Next player: ' + getNextUser(xIsNext);
-
   return (
     <div>
-      <div className="status">{status}</div>
       <div className="board-row">
         {renderSquare(0)}
         {renderSquare(1)}
@@ -80,21 +79,50 @@ const linesUp = (squares: string[]): boolean => {
   return lines.some((line) => squares[line[0]] !== '' && hasSameString(line));
 };
 
-class Game extends React.Component {
-  render() {
+const Game = () => {
+  const [history, setHistory] = useState([Array(9).fill('')]);
+  const [currentMove, setCurrentMove] = useState(0);
+  const currentSquares = history[currentMove];
+  const xIsNext = currentMove % 2 === 0;
+
+  const handlePlay = (nextSquares: string[]) => {
+    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+    setHistory(nextHistory);
+    setCurrentMove(nextHistory.length - 1);
+  };
+
+  const jumpTo = (nextMove: number) => {
+    setCurrentMove(nextMove);
+  };
+
+  const moves = history.map((squares, index) => {
+    let description;
+    if (index === 0) {
+      description = 'Go to game start';
+    } else {
+      description = 'Go to move #' + index;
+    }
     return (
-      <div className="game">
-        <div className="game-board">
-          <Board />
-        </div>
-        <div className="game-info">
-          <div>{/* status */}</div>
-          <ol>{/* TODO */}</ol>
-        </div>
-      </div>
+      <li key={index}>
+        <button onClick={() => jumpTo(index)}>{description}</button>
+      </li>
     );
-  }
-}
+  });
+
+  const status = linesUp(currentSquares) ? 'Winner: ' + getNextUser(!xIsNext) : 'Next player: ' + getNextUser(xIsNext);
+
+  return (
+    <div className="game">
+      <div className="game-board">
+        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+      </div>
+      <div className="game-info">
+        <div>{status}</div>
+        <ol>{moves}</ol>
+      </div>
+    </div>
+  );
+};
 
 // ========================================
 
