@@ -23,7 +23,7 @@
     "playwright": "playwright test",
     "playwright:headed": "playwright test --headed",
     "eject": "react-scripts eject",
-    "fmt": "prettier --write 'src/**/*.tsx'"
+    "fmt": "prettier --write 'src/**/*.{ts,tsx}'"
   },
   "eslintConfig": {
     "extends": [
