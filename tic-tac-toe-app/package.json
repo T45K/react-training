@@ -19,10 +19,11 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "jest",
     "playwright": "playwright test",
     "playwright:headed": "playwright test --headed",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "fmt": "prettier --write '**/*.{ts,tsx}'"
   },
   "eslintConfig": {
     "extends": [
@@ -43,6 +44,10 @@
     ]
   },
   "devDependencies": {
-    "@playwright/test": "^1.17.0"
+    "@playwright/test": "^1.17.0",
+    "jest": "^29.6.0",
+    "jest-environment-jsdom": "^29.6.0",
+    "prettier": "^2.8.8",
+    "ts-jest": "^29.1.1"
   }
 }
